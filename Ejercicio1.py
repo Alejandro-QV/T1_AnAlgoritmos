@@ -93,7 +93,7 @@ def MostrarTodo():
         print("lista vacia")
         return
 
-    for p in puestos:2
+    for p in puestos:
         print(p.codigo, p.descripcion, p.areaSolicitante, p.plazasRequeridas, p.sueldo)
 
 
