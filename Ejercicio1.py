@@ -8,13 +8,13 @@ class PuestoTrabajo:
         self.sueldo = sueldo
 
 
-# ---------------- LISTA GLOBAL ----------------
+# ---------------- LISTA ----------------
 puestos = []
 
 
-# ---------------- VALIDACIONEs ----------------
+# ---------------- VALIDACIONES ----------------
 def validar_texto(txt):
-    return isinstance(txt, str) and len(txt.strip()) >= 3
+    return len(txt.strip()) >= 3
 
 def validar_num(n):
     return n > 0
@@ -23,9 +23,8 @@ def validar_num(n):
 # ---------------- ORDENAMIENTOS ----------------
 
 def burbuja_codigo_desc(lista):
-    n = len(lista)
-    for i in range(n):
-        for j in range(0, n - i - 1):
+    for i in range(len(lista)):
+        for j in range(len(lista) - 1):
             if lista[j].codigo < lista[j + 1].codigo:
                 lista[j], lista[j + 1] = lista[j + 1], lista[j]
 
@@ -41,40 +40,49 @@ def insercion_sueldo_desc(lista):
 
 
 def seleccion_total_desc(lista):
-    n = len(lista)
-    for i in range(n):
-        maximo = i
-        for j in range(i + 1, n):
-            if (lista[j].plazasRequeridas * lista[j].sueldo) > (lista[maximo].plazasRequeridas * lista[maximo].sueldo):
-                maximo = j
-        lista[i], lista[maximo] = lista[maximo], lista[i]
+    for i in range(len(lista)):
+        max_i = i
+        for j in range(i + 1, len(lista)):
+            if (lista[j].plazasRequeridas * lista[j].sueldo) > (lista[max_i].plazasRequeridas * lista[max_i].sueldo):
+                max_i = j
+        lista[i], lista[max_i] = lista[max_i], lista[i]
 
 
-# ---------------- FUNCIONES MENU ----------------
+# ---------------- FUNCIONES ----------------
 
 def AgregarPuesto():
     try:
         codigo = int(input("codigo: "))
         descripcion = input("descripcion: ")
-        area = input("area solicitante: ")
+        area = input("area: ")
         plazas = int(input("plazas: "))
         sueldo = float(input("sueldo: "))
 
-        if not validar_texto(descripcion) or not validar_texto(area):
-            print("texto invalido")
+        if not validar_texto(descripcion):
+            print("descripcion corta")
             return
 
-        if not validar_num(plazas) or not validar_num(sueldo):
-            print("numeros invalidos")
+        if not validar_texto(area):
+            print("area corta")
+            return
+
+        if not validar_num(plazas):
+            print("plazas invalidas")
+            return
+
+        if not validar_num(sueldo):
+            print("sueldo invalido")
             return
 
         for p in puestos:
-            if p.codigo == codigo or p.descripcion == descripcion or p.areaSolicitante == area:
-                print("ya existe el puesto")
+            if p.codigo == codigo:
+                print("codigo repetido")
                 return
 
-        puestos.append(PuestoTrabajo(codigo, descripcion, area, plazas, sueldo))
-        print("puesto agregado")
+        nuevo = PuestoTrabajo(codigo, descripcion, area, plazas, sueldo)
+        puestos.append(nuevo)
+
+        print("agregado. total:", len(puestos))
 
     except:
         print("error en datos")
@@ -85,8 +93,8 @@ def MostrarTodo():
         print("lista vacia")
         return
 
-    for p in puestos:
-        print(p.codigo, "-", p.descripcion, "-", p.areaSolicitante, "-", p.plazasRequeridas, "-", p.sueldo)
+    for p in puestos:2
+        print(p.codigo, p.descripcion, p.areaSolicitante, p.plazasRequeridas, p.sueldo)
 
 
 def BorraPuesto():
@@ -141,14 +149,14 @@ def busqueda_binaria_sueldo(lista, valor):
 
 def BuscarSueldo():
     try:
-        valor = float(input("sueldo a buscar: "))
+        valor = float(input("sueldo: "))
 
         insercion_sueldo_desc(puestos)
 
         res = busqueda_binaria_sueldo(puestos, valor)
 
         if len(res) == 0:
-            print("no hay resultados")
+            print("no encontrado")
             return
 
         for p in res:
@@ -160,7 +168,7 @@ def BuscarSueldo():
 
 def PuestosAContratar():
     try:
-        dinero = float(input("presupuesto total: "))
+        dinero = float(input("presupuesto: "))
 
         seleccion_total_desc(puestos)
 
@@ -183,11 +191,11 @@ def PuestosAContratar():
 
 while True:
     print("\nmenu")
-    print("1 agregar puesto")
-    print("2 mostrar todo")
-    print("3 borrar puesto")
+    print("1 agregar")
+    print("2 mostrar")
+    print("3 borrar")
     print("4 buscar sueldo")
-    print("5 puestos a contratar")
+    print("5 contratar")
     print("6 salir")
 
     op = input("opcion: ")
